@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  image-optimizer-lambda
+  Infraestrutura completa para o otimizador de imagens
+
+Globals:
+  Function:
+    Timeout: 60
+    MemorySize: 512
+
+Resources:
+  SourceImageBucket:
+    Type: AWS::S3::Bucket
+
+  DestinationImageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  DestinationBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref DestinationImageBucket
+      PolicyDocument:
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub 'arn:aws:s3:::${DestinationImageBucket}/*'
+  
+  ImageOptimizerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: br.com.optimizer.ImageHandler::handleRequest
+      Runtime: java21
+      CodeUri: target/image-optimizer-lambda-1.0.jar
+      Environment:
+        Variables:
+          DESTINATION_BUCKET: !Ref DestinationImageBucket
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+              Resource: !Sub 'arn:aws:s3:::${SourceImageBucket}/*'
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource: !Sub 'arn:aws:s3:::${DestinationImageBucket}/*'
+
+Outputs:
+  SourceBucketName:
+    Description: "Nome do bucket de origem para upload de imagens"
+    Value: !Ref SourceImageBucket
+  DestinationBucketName:
+    Description: "Nome do bucket de destino com imagens otimizadas"
+    Value: !Ref DestinationImageBucket
+  LambdaFunctionName:
+    Description: "Nome da função Lambda"
+    Value: !Ref ImageOptimizerFunction
+  LambdaFunctionArn:
+    Description: "ARN da função Lambda"
+    Value: !GetAtt ImageOptimizerFunction.Arn

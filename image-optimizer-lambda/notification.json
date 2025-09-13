@@ -1,0 +1,9 @@
+{
+  "LambdaFunctionConfigurations": [
+    {
+      "Id": "image-upload-trigger",
+      "LambdaFunctionArn": "arn:aws:lambda:sa-east-1:334387323477:function:image-optimizer-stack-ImageOptimizerFunction-fKt2ayzhdNPJ",
+      "Events": ["s3:ObjectCreated:*"]
+    }
+  ]
+}

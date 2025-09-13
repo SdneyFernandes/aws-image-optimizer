@@ -1,0 +1,21 @@
+# Arquivos gerados pelo Build do Maven
+/image-optimizer-lambda/target/
+/image-optimizer-lambda/*.jar
+
+# Logs
+logs
+*.log
+
+# Arquivos de IDE
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# Arquivos do SAM CLI
+.aws-sam/
+
+# Arquivos do Sistema Operacional
+.DS_Store
+Thumbs.db
