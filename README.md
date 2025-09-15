@@ -16,15 +16,6 @@ O objetivo é resolver um problema comum de performance em aplicações web e mo
 
 O fluxo de trabalho é iniciado por um evento de criação de objeto no S3. A arquitetura foi desenhada para ser eficiente e desacoplada:
 
-```mermaid
-graph TD
-    A[👤 Usuário] -->|1. Upload da imagem original (ex: foto.png)| B(🪣 Bucket S3 de Origem);
-    B -->|2. Aciona o gatilho (S3 Event)| C{🚀 Função Lambda (Java 21)};
-    C -->|3. Processa e otimiza a imagem| D[⚙️ Lógica de Otimização <br> com Thumbnailator];
-    C -->|4. Salva a imagem otimizada (ex: foto.jpg)| E(🪣 Bucket S3 de Destino);
-    F[🌐 Aplicação Web/Mobile] -->|5. Acesso público à imagem otimizada| E;
-```
-
 1.  **Upload:** Um usuário ou sistema faz o upload de uma imagem para o `Bucket S3 de Origem`.
 2.  **Gatilho:** O evento `s3:ObjectCreated:*` aciona automaticamente a função Lambda.
 3.  **Processamento:** A função Lambda, escrita em **Java 21**, faz o download da imagem, a redimensiona para uma largura máxima de 1200px, ajusta sua qualidade e a converte para o formato JPG usando a biblioteca `Thumbnailator`.
